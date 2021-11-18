@@ -1,2 +1,2 @@
 # Raytracer
-!Screenshot[gabriel.jpg]
+![Screenshot](gabriel.jpg)
