@@ -44,22 +44,8 @@ def glFinish(filename,width,height,pixels):
             for x in range(width):
                 file.write(pixels[x][y].toBytes())
 
-class V3(object):
-  def __init__(self, x, y = None, z = None):
-    self.x = x
-    self.y = y
-    self.z = z
-
-  def __repr__(self):
-    return "V3(%s, %s, %s)" % (self.x, self.y, self.z)
-
-class V2(object):
-  def __init__(self, x, y = None):
-    self.x = x
-    self.y = y
-
-  def __repr__(self):
-    return "V2(%s, %s)" % (self.x, self.y)
+V2 = namedtuple('Point2', ['x', 'y'])
+V3 = namedtuple('Point3', ['x', 'y', 'z'])
 
 def sum(v0, v1):
 
@@ -210,14 +196,52 @@ class Light(object):
         self.intensity = intensity
 
 class Material(object):
-    def __init__(self, diffuse=WHITE, albedo=(1, 0, 0, 0), spec=0, refractive_index=1):
+    def __init__(self, diffuse=WHITE, albedo=(1, 0, 0, 0), spec=0, refractive_index=1, texture = None):
         self.diffuse = diffuse
         self.albedo = albedo
         self.spec = spec
         self.refractive_index = refractive_index
+        self.texture = texture
 
 class Intersect(object):
-    def __init__(self, distance, point, normal):
+    def __init__(self, distance, point, normal, texture = None):
         self.distance = distance
         self.point = point
         self.normal = normal
+        self.texture = texture
+
+class Texture(object):
+    def __init__(self, path):
+        self.path = path
+        self.read()
+
+    def read(self):
+        img = open(self.path, "rb")
+        img.seek(10)
+        headerSize = struct.unpack('=l', img.read(4))[0]
+
+        img.seek(14 + 4)
+        self.width = struct.unpack('=l', img.read(4))[0]
+        self.height = struct.unpack('=l', img.read(4))[0]
+
+        img.seek(headerSize)
+        self.pixels = []
+        for y in range(self.height):
+            self.pixels.append([])
+            for x in range(self.width):
+                b = ord(img.read(1)) / 255
+                g = ord(img.read(1)) / 255
+                r = ord(img.read(1)) / 255
+
+                self.pixels[y].append(color(r, g, b))
+
+
+        img.close()
+
+    def get_color(self, tx, ty):
+      if tx >= 0 and tx <= 1 and ty >= 0 and ty <= 1:
+        x = int(tx * self.width)
+        y = int(ty * self.height)
+        return self.pixels[y][x]
+      else:
+        return color(0, 0, 0)

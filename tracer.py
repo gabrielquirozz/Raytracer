@@ -2,6 +2,8 @@ from lib import *
 from math import pi, tan
 from random import random
 from sphere import *
+from cube import *
+from plane import *
 
 BLACK = color(0,0,0)
 MAX_RECURSION_DEPTH = 3
@@ -93,6 +95,10 @@ class Raytracer(object):
         reflection = reflect_color * material.albedo[2]
         refraction = refract_color * material.albedo[3]
 
+        if material.texture and intersect.texture is not None:
+            text_color = material.texture.get_color(intersect.texture[0], intersect.texture[1])
+            diffuse = text_color * 255
+
         return diffuse + specular + reflection + refraction
     
     def scene_intersect(self, orig, direction):
@@ -117,7 +123,7 @@ class Raytracer(object):
         ar = self.width/self.height
         for y in range(self.height):
             for x in range(self.width):
-                if random() > 0.9:
+                if random() > 0:
                     i =  (2*(x + 0.5)/self.width - 1) * tan(fov/2) * ar
                     j =  (2*(y + 0.5)/self.height - 1) * tan(fov/2)
                     direction = norm(V3(i, j, -1))
@@ -129,7 +135,12 @@ class Raytracer(object):
 ivory = Material(diffuse=color(100, 100, 80), albedo=(0.6, 0.3, 0.1, 0), spec=50)
 rubber = Material(diffuse=color(80, 0, 0), albedo=(0.9, 0.1, 0, 0, 0), spec=10)
 mirror = Material(diffuse=color(255, 255, 255), albedo=(0, 10, 0.8, 0), spec=1425)
-glass = Material(diffuse=color(150, 180, 200), albedo=(0, 0.5, 0.1, 0.8), spec=125, refractive_index=1.5)
+sun = Material(diffuse=color(252, 212, 64))
+tree = Material(texture=Texture('materials/Oak-Leaves.bmp'))
+grass = Material(texture=Texture('materials/textura.bmp'))
+water = Material(texture=Texture('materials/water.bmp'))
+wood = Material(texture=Texture('materials/woo.bmp'))
+
 
 r = Raytracer(1000, 1000)
 
@@ -141,10 +152,38 @@ r.light = Light(
 r.background_color = color(50, 50, 200)
 
 r.scene = [
-  Sphere(V3(0, -1.5, -10), 1.5, ivory),
-  Sphere(V3(0, 0, -5), 0.5, glass),
-  Sphere(V3(1, 1, -8), 1.7, rubber),
-  Sphere(V3(-3, 3, -10), 2, mirror)
+  Sphere(V3(0.3, 0, -10), 1.5, sun),
+  Cube(V3(0, -8, -20),2,wood),
+  Cube(V3(-2, -8, -20),2,wood),
+  Cube(V3(2, -8, -20),2,tree),
+  Cube(V3(2, -6, -20),2,tree),
+  Cube(V3(2, -10, -20),2,tree),
+  Cube(V3(4, -8, -20),2,tree),
+  Cube(V3(-6, -10, -20),2,grass),
+  Cube(V3(-7, -10, -20),2,grass),
+  Cube(V3(-6, -8, -20),2,grass),
+  Cube(V3(-4, -8, -20),2,grass),
+  Cube(V3(-4, -10, -20),2,grass),
+  Cube(V3(-4, -6, -20),2,grass),
+  Cube(V3(-4, -4, -20),2,grass),
+  Cube(V3(-4, -2, -20),2,grass),
+  Cube(V3(-4, 0, -20),2,grass),
+  Cube(V3(-4, 2, -20),2,grass),
+  Cube(V3(-4, 4, -20),2,grass),
+  Cube(V3(-4, 6, -20),2,grass),
+  Cube(V3(-4, 8, -20),2,grass),
+  Cube(V3(-4, 10, -20),2,grass),
+  Cube(V3(-6, 10, -20),2,grass),
+  Cube(V3(-7, 10, -20),2,grass),
+  Cube(V3(-6, 8, -20),2,grass),
+  Cube(V3(-4, 8, -20),2,grass),
+  Cube(V3(0, 8, -20),2,wood),
+  Cube(V3(-2, 8, -20),2,wood),
+  Cube(V3(2, 8, -20),2,tree),
+  Cube(V3(2, 6, -20),2,tree),
+  Cube(V3(2, 10, -20),2,tree),
+  Cube(V3(4, 8, -20),2,tree),
+  Cube(V3(-13, 0, -20),15,water),
 ]
 r.render()
 r.glFinish('gabriel.bmp')
