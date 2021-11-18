@@ -1,1 +1,2 @@
 # Raytracer
+!Screenshot[gabriel.jpg]
