@@ -149,10 +149,10 @@ r.light = Light(
   intensity=1.5
 )
 
-r.background_color = color(50, 50, 200)
+r.background_color = color(0, 196, 255)
 
 r.scene = [
-  Sphere(V3(0.3, 0, -10), 1.5, sun),
+  Sphere(V3(0.6, 0, 1), 1, sun),
   Cube(V3(0, -8, -20),2,wood),
   Cube(V3(-2, -8, -20),2,wood),
   Cube(V3(2, -8, -20),2,tree),
