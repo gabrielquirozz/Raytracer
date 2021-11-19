@@ -135,11 +135,12 @@ class Raytracer(object):
 ivory = Material(diffuse=color(100, 100, 80), albedo=(0.6, 0.3, 0.1, 0), spec=50)
 rubber = Material(diffuse=color(80, 0, 0), albedo=(0.9, 0.1, 0, 0, 0), spec=10)
 mirror = Material(diffuse=color(255, 255, 255), albedo=(0, 10, 0.8, 0), spec=1425)
-sun = Material(diffuse=color(252, 212, 64))
+sun = Material(diffuse=color(252, 212, 64), refractive_index=1.5)
 tree = Material(texture=Texture('materials/Oak-Leaves.bmp'))
 grass = Material(texture=Texture('materials/textura.bmp'))
 water = Material(texture=Texture('materials/water.bmp'))
 wood = Material(texture=Texture('materials/woo.bmp'))
+cloud = Material(texture=Texture('materials/rsz_1cloud.bmp'))
 
 
 r = Raytracer(1000, 1000)
@@ -152,7 +153,11 @@ r.light = Light(
 r.background_color = color(0, 196, 255)
 
 r.scene = [
-  Sphere(V3(0.6, 0, 1), 1, sun),
+  Cube(V3(8, 8, -20),1,cloud),
+  Cube(V3(8, -8, -20),1,cloud),
+  Cube(V3(8, -7, -20),1,cloud),
+  Cube(V3(8, 7, -20),1,cloud),
+  Cube(V3(4, 0, -20), 4, sun),
   Cube(V3(0, -8, -20),2,wood),
   Cube(V3(-2, -8, -20),2,wood),
   Cube(V3(2, -8, -20),2,tree),
